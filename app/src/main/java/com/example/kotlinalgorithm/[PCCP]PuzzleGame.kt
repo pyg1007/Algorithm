@@ -15,6 +15,7 @@ fun puzzleSolution(diffs: IntArray, times: IntArray, limit: Long): Int {
     var left = 1L
     var right = limit
 
+    //이분탐색을 이용
     while(left <= right){
         val mid = (left + right) / 2
         if (checkPuzzle(mid, diffs, times, limit)){
@@ -51,9 +52,19 @@ private fun checkPuzzle(level: Long, diffs: IntArray, times: IntArray, limit: Lo
 
     var duration = 0L
     diffs.forEachIndexed { index, diff ->
+        /**
+         *
+         * diff ≤ level이면 퍼즐을 틀리지 않고 time_cur만큼의 시간을 사용하여 해결합니다
+         *
+         */
         if (diff <= level){
             duration += times[index]
         }else{
+            /**
+             *
+             * diff > level이면, 퍼즐을 총 diff - level번 틀립니다. 퍼즐을 틀릴 때마다, time_cur만큼의 시간을 사용하며, 추가로 time_prev만큼의 시간을 사용해 이전 퍼즐을 다시 풀고 와야 합니다. 이전 퍼즐을 다시 풀 때는 이전 퍼즐의 난이도에 상관없이 틀리지 않습니다. diff - level번 틀린 이후에 다시 퍼즐을 풀면 time_cur만큼의 시간을 사용하여 퍼즐을 해결합니다.
+             *
+             */
             duration += if (index != 0) {
                 (diff - level) * (times[index] + times[index - 1]) + times[index]
             }else{
